@@ -8,10 +8,12 @@
     "license": "AGPL-3",
     "depends": [
         "base",
+        "mail",
     ],
     "data": [
         "security/ir.model.access.csv",
         "views/idea_menu.xml",
+        "views/idea_vote_view.xml",
         "views/idea_management_view.xml",
     ],
 }

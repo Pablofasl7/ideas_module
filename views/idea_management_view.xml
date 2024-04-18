@@ -5,8 +5,10 @@
         <field name="model">idea.management</field>
         <field name="arch" type="xml">
             <tree string="Idea">
+                <field name="user_id"/>
                 <field name="name"/>
-                <field name="idea_type"/>
+                <field name="state"/> 
+                <field name="idea_type"/>                
                 <field name="company_id"/> 
             </tree>
         </field>
@@ -22,6 +24,7 @@
                         <button string="Aprobar" name='aprobar' type="object" invisible="state!='revision'" /> <!-- Si ponemos invisible="1" el botón sera invisible siempre -->
                         <button string="En proceso" name="proceso" type="object" invisible="state!='aprobada'" />
                         <button string="Completar" name="completada" type="object" invisible="state not in 'proceso,aprobada'"/>
+                        <button string="Votar" name="action_open_vote_form" type="object" invisible="state not in 'proceso,aprobada,completada'"/>
                         <button string="Cancelar" name="cancelada" type="object" invisible="state not in 'revision,aprobada,proceso,completada'"/>
                         <field name="state" widget="statusbar"/>
                     </header>
@@ -50,8 +53,17 @@
                         <page string="Detalles">
                             <field name="details"/> 
                         </page>
+
+                        <page string="Votos de los usuarios">
+                            <field name="details"/> 
+                        </page>
                     </notebook>
                 </sheet>
+                    <div class="oe_chatter">
+                            <field name="message_follower_ids"/>
+                            <field name="activity_ids"/>
+                            <field name="message_ids" options="{'post_refresh': 'recipients'}"/>
+                    </div>
             </form>
         </field>
     </record>

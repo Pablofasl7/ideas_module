@@ -1,0 +1,27 @@
+<record id="view_idea_vote_form" model="ir.ui.view">
+    <field name="name">idea.vote.form</field>
+    <field name="model">idea.vote</field>
+    <field name="arch" type="xml">
+        <form string="Voto">
+            <header>
+                <h1>Rating</h1>
+            </header>
+            <sheet>
+                <group>
+                    <field name="rating" widget="priority"/>
+                </group>
+            </sheet>
+            <header>
+                <h1>Comentarios</h1>
+            </header>
+            <sheet>
+                <group>
+                    <field name="comments"/>
+                </group>
+            </sheet>
+            <footer>
+                <field name="voter_id" widget="many2one_hidden"/>
+            </footer>
+        </form>
+    </field>
+</record>
