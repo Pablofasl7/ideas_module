@@ -5,10 +5,9 @@
         <field name="model">idea.management</field>
         <field name="arch" type="xml">
             <tree string="Idea">
-                <field name="name" />
-                <field name="create_date" />
-                <field name="deadline" />
-                <field name="employee_id" />
+                <field name="name"/>
+                <field name="idea_type"/>
+                <field name="company_id"/> 
             </tree>
         </field>
     </record>
@@ -26,12 +25,22 @@
                     </div>
                     <group>
                         <group>
-                            <field name="employee_id"/>                        
-                            <field name="create_date" />
-                            <field name="deadline" />
+                            <field name="user_id"/>
+                            <field name="create_date"/>
+                            <field name="deadline"/>
                         </group>
-                    </group>   
 
+                        <group>
+                            <field name="company_id" context="{'default_is_company': True}" domain="[('is_company', '=', True)]"/>                       
+                            <field name="idea_type"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Detalles">
+                            <field name="details"/> 
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
