@@ -17,7 +17,16 @@
         <field name="model">idea.management</field>
         <field name="arch" type="xml">
             <form string="Idea">
-                <sheet>
+                    <header>
+                        <!-- Lo de los botones para que aparezcan en orden mediante vaya apretando unos y salgan otro no funciona, me salen los 3 del tirón y puedo apretar el que yo quiera. -->
+                        <button string="Aprobar" name='aprobar' type="object" invisible="state!='revision'" /> <!-- Si ponemos invisible="1" el botón sera invisible siempre -->
+                        <button string="En proceso" name="proceso" type="object" invisible="state!='aprobada'" />
+                        <button string="Completar" name="completada" type="object" invisible="state not in 'proceso,aprobada'"/>
+                        <button string="Cancelar" name="cancelada" type="object" invisible="state not in 'revision,aprobada,proceso,completada'"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    
+                    <sheet>
                     <div class="oe_title">
                         <h1>
                             <field name="name"/>
@@ -33,6 +42,7 @@
                         <group>
                             <field name="company_id" context="{'default_is_company': True}" domain="[('is_company', '=', True)]"/>                       
                             <field name="idea_type"/>
+                            <field name="price"/>
                         </group>
                     </group>
 
