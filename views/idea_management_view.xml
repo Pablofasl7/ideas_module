@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_idea_management_tree" model="ir.ui.view">
+        <field name="name">view.idea_management.tree</field>
+        <field name="model">idea.management</field>
+        <field name="arch" type="xml">
+            <tree string="Idea">
+                <field name="name" />
+                <field name="create_date" />
+                <field name="deadline" />
+                <field name="employee_id" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_idea_management_form" model="ir.ui.view">
+        <field name="name">view.idea_management.form</field>
+        <field name="model">idea.management</field>
+        <field name="arch" type="xml">
+            <form string="Idea">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="employee_id"/>                        
+                            <field name="create_date" />
+                            <field name="deadline" />
+                        </group>
+                    </group>   
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+</odoo>            
