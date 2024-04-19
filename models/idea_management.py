@@ -5,6 +5,33 @@ from datetime import timedelta
 def _date_default_today(self):
    return fields.Date.today() # Para que nos devuelva el día actual en el que estamos.
 
+class IdeaManagementVote(models.Model):
+   _name = 'idea.management.vote'
+   _description = 'Idea Management Vote'
+
+   rating = fields.Selection(
+      [('0', 'Very Low'), ('1', 'Baja'), ('2', 'Normal'), ('3', 'Alto'), ('4', 'Muy alto'), ('5', 'Excelente')],
+      string="Valoraciones")
+   comments = fields.Char(string="Comentarios")
+   user_id = fields.Many2one(comodel_name='res.users', string='Empleados')
+   idea_id = fields.Many2one('idea.management', string='Nombre de la idea', readonly=True)
+   
+   def save_vote(self):
+    self.ensure_one()
+    # Busca si ya existe un voto para este usuario en esta idea
+    existing_vote = self.idea_id.vote_ids.filtered(lambda v: v.user_id == self.user_id)
+    if existing_vote:
+        # Si ya existe, actualiza el voto existente
+        existing_vote.write({
+            'rating': self.rating,
+            'comments': self.comments,
+        })
+        return {'type': 'ir.actions.act_window_close'}  # Cierra la ventana después de actualizar el voto existente
+    else:
+        # Si no existe, no hace nada
+        return {'type': 'ir.actions.act_window_close'}
+
+   
 class IdeaManagement(models.Model):
    _name = 'idea.management'
    _description = 'Idea'
@@ -12,6 +39,7 @@ class IdeaManagement(models.Model):
                'mail.thread.blacklist',
                'mail.activity.mixin']
    _primary_email = 'email_from'
+   vote_ids = fields.One2many('idea.management.vote', 'idea_id', string='Votes')
 
    name = fields.Char(string = 'Propuesta')
    create_date = fields.Date(string = 'Fecha de creación', default=_date_default_today)
@@ -36,12 +64,6 @@ class IdeaManagement(models.Model):
    company_id = fields.Many2one(comodel_name='res.partner', string='Compañía')
    user_id = fields.Many2one(comodel_name='res.users', string='Empleados')
    email_from = fields.Char(string='Email from')
-   rating = fields.Selection(
-      [('0', 'Very Low'), ('1', 'Low'), ('2', 'Normal'), ('3', 'High'), ('4', 'Very High'), ('5', 'Excellent')],
-      string="Valoraciones")
-   comments = fields.Text(string="Comentarios")
-
-   idea_id = fields.Many2one('idea.management', string='Nombre de la idea', readonly=True)
    voter_id = fields.Many2one('res.users', string='Usuario que vota')
    
    def aprobar(self):
@@ -81,14 +103,17 @@ class IdeaManagement(models.Model):
          self.deadline = self.create_date + timedelta(days=5)
 
    def open_vote_form(self):
-        view_id = self.env.ref('ideas_module.view_idea_vote_form').id
-        return {
-            'name': 'Voto del Usuario',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'res_model': 'idea.management',
-            'views': [(view_id, 'form')],
-            'type': 'ir.actions.act_window',
-            'target': 'new',
-            'context': {'default_idea_id': self.id, 'default_idea_name': self.name}
-        }              
+    view_id = self.env.ref('ideas_module.view_idea_vote_form').id
+    return {
+        'name': 'Voto del Usuario',
+        'view_type': 'form',
+        'view_mode': 'form',
+        'res_model': 'idea.management.vote',
+        'views': [(view_id, 'form')],
+        'type': 'ir.actions.act_window',
+        'target': 'new',
+        'context': {
+            'default_idea_id': self.id,
+            'default_idea_name': self.name,
+        }
+    }

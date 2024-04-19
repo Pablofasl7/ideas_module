@@ -19,17 +19,16 @@
         <field name="model">idea.management</field>
         <field name="arch" type="xml">
             <form string="Idea">
-                    <header>
-                        <!-- Lo de los botones para que aparezcan en orden mediante vaya apretando unos y salgan otro no funciona, me salen los 3 del tirón y puedo apretar el que yo quiera. -->
-                        <button string="Aprobar" name='aprobar' type="object" invisible="state!='revision'" /> <!-- Si ponemos invisible="1" el botón sera invisible siempre -->
-                        <button string="En proceso" name="proceso" type="object" invisible="state!='aprobada'" />
-                        <button string="Completar" name="completada" type="object" invisible="state not in 'proceso,aprobada'"/>
-                        <button string="Votar" name="open_vote_form" type="object" invisible="state not in 'proceso'"/>
-                        <button string="Cancelar" name="cancelada" type="object" invisible="state not in 'revision,aprobada,proceso,completada'"/>
-                        <field name="state" widget="statusbar"/>
-                    </header>
+                <header>
+                    <button string="Aprobar" name='aprobar' type="object" invisible="state!='revision'" /> <!-- Si ponemos invisible="1" el botón sera invisible siempre -->
+                    <button string="En proceso" name="proceso" type="object" invisible="state!='aprobada'" />
+                    <button string="Completar" name="completada" type="object" invisible="state not in 'proceso,aprobada'"/>
+                    <button string="Votar" name="open_vote_form" type="object" invisible="state not in 'proceso'"/>
+                    <button string="Cancelar" name="cancelada" type="object" invisible="state not in 'revision,aprobada,proceso,completada'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
                     
-                    <sheet>
+                <sheet>
                     <div class="oe_title">
                         <h1>
                             <field name="name"/>
@@ -55,26 +54,33 @@
                         </page>
 
                         <page string="Votos de los usuarios">
-                            <field name="details"/> 
+                            <field name="vote_ids">
+                                <tree string="Votes" editable="bottom">
+                                    <field name="user_id"/>
+                                    <field name="rating"/>
+                                    <field name="comments"/>
+                                </tree>
+                            </field>
                         </page>
                     </notebook>
                 </sheet>
-                    <div class="oe_chatter">
-                            <field name="message_follower_ids"/>
-                            <field name="activity_ids"/>
-                            <field name="message_ids" options="{'post_refresh': 'recipients'}"/>
-                    </div>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids" options="{'post_refresh': 'recipients'}"/>
+                </div>
             </form>
         </field>
     </record>
 
     <record id="view_idea_vote_form" model="ir.ui.view">
-        <field name="name">view.idea_new_form</field>
-        <field name="model">idea.management</field>
+        <field name="name">view.idea_vote_form</field>
+        <field name="model">idea.management.vote</field>
         <field name="arch" type="xml">
             <form string="Voto">
                 <header>
-                    <field name="idea_id" readonly="1"/> 
+                    <field name="idea_id" readonly="1"/>
+                    <field name="user_id" invisible="1"/>
                 </header>
                 <h1>Rating</h1>
                 <field name="rating" widget="priority"/>
@@ -83,16 +89,14 @@
                         <field name="comments"/>
                     </group>
                     <group>
-                        <field name="voter_id"/>
+                        <field name="user_id"/>
                     </group>
                 </sheet>
                 <footer>
-                    <!-- <button string="Guardar" name="save" type="object" class="btn-primary"/> -->
+                    <button string="Guardar" name="save_vote" type="object" class="btn-primary"/>
                     <button string="Cancelar" special="cancel" class="btn-secondary"/>                 
                 </footer>
             </form>
         </field>
     </record>
-
-
-</odoo>            
+</odoo>
