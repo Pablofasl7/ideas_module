@@ -13,7 +13,7 @@ class IdeaManagement(models.Model):
                'mail.activity.mixin']
    _primary_email = 'email_from'
 
-   name = fields.Char(string = 'Propuesta', default="Idea")
+   name = fields.Char(string = 'Propuesta')
    create_date = fields.Date(string = 'Fecha de creación', default=_date_default_today)
    deadline = fields.Date(string = 'Fecha límite')
    idea_type = fields.Selection(
@@ -36,8 +36,13 @@ class IdeaManagement(models.Model):
    company_id = fields.Many2one(comodel_name='res.partner', string='Compañía')
    user_id = fields.Many2one(comodel_name='res.users', string='Empleados')
    email_from = fields.Char(string='Email from')
-   # partner_id = fields.Many2one(comodel_name='hr.employee', string='Empleado')
-   # department_id = fields.Many2one(comodel_name='hr.department', string='Departamento')
+   rating = fields.Selection(
+      [('0', 'Very Low'), ('1', 'Low'), ('2', 'Normal'), ('3', 'High'), ('4', 'Very High'), ('5', 'Excellent')],
+      string="Valoraciones")
+   comments = fields.Text(string="Comentarios")
+
+   idea_id = fields.Many2one('idea.management', string='Nombre de la idea', readonly=True)
+   voter_id = fields.Many2one('res.users', string='Usuario que vota')
    
    def aprobar(self):
       self.ensure_one()
@@ -73,4 +78,17 @@ class IdeaManagement(models.Model):
    @api.onchange('create_date')
    def _update_deadline(self):
       if self.create_date:
-         self.deadline = self.create_date + timedelta(days=5)         
+         self.deadline = self.create_date + timedelta(days=5)
+
+   def open_vote_form(self):
+        view_id = self.env.ref('ideas_module.view_idea_vote_form').id
+        return {
+            'name': 'Voto del Usuario',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'idea.management',
+            'views': [(view_id, 'form')],
+            'type': 'ir.actions.act_window',
+            'target': 'new',
+            'context': {'default_idea_id': self.id, 'default_idea_name': self.name}
+        }              
