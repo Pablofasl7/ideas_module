@@ -18,15 +18,13 @@ class IdeaManagementVote(models.Model):
    
    def save_vote(self):
     self.ensure_one()
-    # Busca si ya existe un voto para este usuario en esta idea
     existing_vote = self.idea_id.vote_ids.filtered(lambda v: v.user_id == self.user_id)
     if existing_vote:
-        # Si ya existe, actualiza el voto existente
         existing_vote.write({
             'rating': self.rating,
             'comments': self.comments,
         })
-        return {'type': 'ir.actions.act_window_close'}  # Cierra la ventana después de actualizar el voto existente
+        return {'type': 'ir.actions.act_window_close'}  
     else:
         # Si no existe, no hace nada
         return {'type': 'ir.actions.act_window_close'}

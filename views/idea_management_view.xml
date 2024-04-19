@@ -54,8 +54,8 @@
                         </page>
 
                         <page string="Votos de los usuarios">
-                            <field name="vote_ids">
-                                <tree string="Votes" editable="bottom">
+                            <field name="vote_ids" readonly="1">
+                                <tree string="Votes" readonly="1">
                                     <field name="user_id"/>
                                     <field name="rating"/>
                                     <field name="comments"/>
