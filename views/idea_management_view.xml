@@ -44,6 +44,7 @@
                         <group>
                             <field name="partner_id" context="{'default_is_company': True}" domain="[('is_company', '=', True)]"/>                       
                             <field name="idea_type"/>
+                            <field name="ideas_usuario"/>                            
                             <field name="price"/>
                         </group>
                     </group>

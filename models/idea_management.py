@@ -13,7 +13,7 @@ class IdeaManagementVote(models.Model):
       [('0', 'Very Low'), ('1', 'Baja'), ('2', 'Normal'), ('3', 'Alto'), ('4', 'Muy alto'), ('5', 'Excelente')],
       string="Valoraciones")
    comments = fields.Char(string="Comentarios")
-   user_id = fields.Many2one(comodel_name='res.users', string='Empleados')
+   user_id = fields.Many2one(comodel_name='res.users', string='Usuario')
    idea_id = fields.Many2one('idea.management', string='Nombre de la idea', readonly=True)
    
    def save_vote(self):
@@ -62,7 +62,7 @@ class IdeaManagement(models.Model):
    assigned = fields.Boolean(string = 'Assigned', compute='_compute_assigned')
 
    partner_id = fields.Many2one(comodel_name='res.partner', string='Compañía')
-   user_id = fields.Many2one(comodel_name='res.users', string='Empleados')
+   user_id = fields.Many2one(comodel_name='res.users', string='Usuario')
    email_from = fields.Char(string='Email from')
    voter_id = fields.Many2one('res.users', string='Usuario que vota')
    
@@ -122,3 +122,11 @@ class IdeaManagement(models.Model):
    def _compute_assigned(self):
       for record in self:
          record.assigned = self.user_id and True or False
+
+   ideas_usuario = fields.Integer(string='Número de ideas del usuario', compute='_compute_ideas_user')
+
+   @api.depends('user_id')
+   def _compute_ideas_user(self):
+      for record in self:
+         other_tickets = self.env['idea.management'].search([('user_id', '=', record.user_id.id)])
+         record.ideas_usuario = len(other_tickets)      
