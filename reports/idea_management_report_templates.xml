@@ -1,61 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-<template id="report_idea_management_document">
-    <t t-call="web.external_layout">
-
-        <div class="page">
-            <div class="oe_structure"/>
-
-            <h2 class="mt16">
-                <span t-field="doc.name"/>
-            </h2>
-
-            <div class="row mt32 mb32" id="informations">
-                <div class="col-auto col-3 mw-100 mb-2">
-                    <strong>Fecha:</strong>
-                    <p class="m-0" t-field="doc.create_date"/>
+    <template id="report_idea_management_document">
+        <t t-call="web.external_layout">
+            <div class="page">
+                <div class="oe_structure"/>
+                <div class="mt-4 mb-4 text-center">
+                    <h2 class="mt16">
+                        <span t-field="doc.name"/>
+                    </h2>
                 </div>
-                <div t-if="doc.partner_id" class="col-auto col-3 mw-100 mb-2">
-                    <strong>Partner:</strong>
-                    <p class="m-0" t-field="doc.partner_id"/>
+                <div class="row mt32 mb32" id="informations">
+                    <div class="col-auto col-3 mw-100 mb-2">
+                        <strong>Fecha:</strong>
+                        <p class="m-0" t-field="doc.create_date"/>
+                    </div>
+                    <div t-if="doc.partner_id" class="col-auto col-3 mw-100 mb-2">
+                        <strong>Partner:</strong>
+                        <p class="m-0" t-field="doc.partner_id"/>
+                    </div>
                 </div>
-            </div>
-
-            <table class="table table-sm o_main_table">
-                <thead style="display: table-row-group">
-                    <tr>
-                        <th name="th_user_id" class="text-left">Usuario</th>
-                        <th name="th_rating" class="text-right">Valoración</th>
-                        <th name="th_comments" class="text-right">Comentario</th>
-                    </tr>
-                </thead>
-                <tbody class="sale_tbody">
-                    <t t-foreach="doc.vote_ids" t-as="vote">
-                        <tr class="bg-200 font-weight-bold">
-                            <td name="td_user_id">
-                                <span t-field="vote.user_id"/>
-                            </td>
-                            <td name="td_rating" class="text-right">
-                                <span t-field="vote.rating"/>
-                            </td>
-                            <td name="td_comments" class="text-right">
-                                <span t-field="vote.comments"/>
-                            </td>
+                <table class="table table-sm o_main_table">
+                    <thead style="display: table-row-group">
+                        <tr>
+                            <th name="th_user_id" class="text-left bg-primary text-light">Usuario</th>
+                            <th name="th_rating" class="text-right bg-primary text-light">Valoración</th>
+                            <th name="th_comments" class="text-right bg-primary text-light">Comentario</th>
                         </tr>
-                    </t>
-                </tbody>
-            </table>
-        </div>    
-    </t>
-</template>
-
-
-<template id="report_idea_management">
-    <t t-call="web.html_container">
-        <t t-foreach="docs" t-as="doc">
-            <t t-call="ideas_module.report_idea_management_document"/>
+                    </thead>
+                    <tbody class="sale_tbody">
+                        <t t-foreach="doc.vote_ids" t-as="vote">
+                            <tr class="bg-200 font-weight-bold">
+                                <td name="td_user_id">
+                                    <span t-field="vote.user_id"/>
+                                </td>
+                                <td name="td_rating" class="text-right">
+                                    <span t-field="vote.rating"/>
+                                </td>
+                                <td name="td_comments" class="text-right">
+                                    <span t-field="vote.comments"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>    
         </t>
-    </t>
-</template>
-
+    </template>
+    <template id="report_idea_management">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="ideas_module.report_idea_management_document"/>
+            </t>
+        </t>
+    </template>
 </odoo>
