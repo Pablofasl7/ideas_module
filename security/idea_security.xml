@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+<record id="ir_module_category_idea_management" model="ir.module.category">
+    <field name="name">Idea</field>
+</record>
+
+<record id="idea_management_user" model="res.groups">
+    <field name="name">User</field>
+    <field name="category_id" ref="ir_module_category_idea_management"/>
+    <field name="comment">
+        Usuarios que podrán votar una vez la idea haya sido aprobada.
+    </field>
+</record>
+
+<record id="idea_management_manager" model="res.groups">
+    <field name="name">Manager</field>
+    <field name="category_id" ref="ir_module_category_idea_management"/>
+    <field name="implied_ids" eval="[(4, ref('idea_management_user'))]"/>
+    <field name="users" eval="[(4, ref('base.user_root'))]"/>
+    <field name="comment">
+        Administradores que podrán aprobar ideas de todos y además también pueden votar.
+    </field>
+</record>
+
+<record id="idea_management_vote_user" model="res.groups">
+    <field name="name">Acceso para votar de los usuarios</field>
+    <field name="category_id" ref="ir_module_category_idea_management"/>
+    <field name="comment">Usuarios que podrán votar en las ideas.</field>
+</record>
+
+<record id="idea_management_vote_manager" model="res.groups">
+    <field name="name">Acceso para votar de los managers</field>
+    <field name="category_id" ref="ir_module_category_idea_management"/>
+    <field name="implied_ids" eval="[(4, ref('idea_management_vote_user'))]"/>
+    <field name="users" eval="[(4, ref('base.user_root'))]"/>
+    <field name="comment">Administradores que pueden votar y gestionar votos en las ideas.</field>
+</record>
+
+</odoo>
