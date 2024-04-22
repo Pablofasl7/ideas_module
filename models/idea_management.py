@@ -61,7 +61,7 @@ class IdeaManagement(models.Model):
    
    assigned = fields.Boolean(string = 'Assigned', compute='_compute_assigned')
 
-   company_id = fields.Many2one(comodel_name='res.partner', string='Compañía')
+   partner_id = fields.Many2one(comodel_name='res.partner', string='Compañía')
    user_id = fields.Many2one(comodel_name='res.users', string='Empleados')
    email_from = fields.Char(string='Email from')
    voter_id = fields.Many2one('res.users', string='Usuario que vota')

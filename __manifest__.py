@@ -13,6 +13,7 @@
     "data": [
         "security/idea_security.xml",
         "security/ir.model.access.csv",
+        "reports/idea_management_report_templates.xml",
         "views/idea_menu.xml",
         "views/idea_management_view.xml",
     ],
