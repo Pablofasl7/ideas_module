@@ -73,6 +73,28 @@
         </field>
     </record>
 
+    <record id="view_idea_management_search" model="ir.ui.view">
+        <field name="name">view.idea_management.search</field>
+        <field name="model">idea.management</field>
+        <field name="arch" type="xml">
+            <search string="Ticket">
+                <!-- Filtrar por nombre y por usuario asignado -->
+                <field name="name"/>
+                <field name= "user_id"/>
+                <!-- Filtrar por tipos de idea -->
+                <filter string="Mejoras" name="idea_type" domain="[('idea_type', '=', 'mejoras')]"/>
+                <filter string="Plantear proyecto" name="idea_type" domain="[('idea_type', '=', 'proyecto')]"/>
+                <filter string="Otros" name="idea_type" domain="[('idea_type', '=', 'otros')]"/>
+                <!-- Agrupar -->
+                <filter string="Usuario" name="assigned_to" context="{'group_by':'user_id'}"/>
+                <filter string="Estado" name="state" context="{'group_by':'state'}"/>
+                <separator string="Separador"/>
+                <filter string="Tipo de idea" name="idea_type" context="{'group_by':'idea_type'}"/>
+                <filter string="Compañía" name="company_id" context="{'group_by':'company_id'}"/>
+            </search>
+        </field>
+    </record>
+
     <record id="view_idea_vote_form" model="ir.ui.view">
         <field name="name">view.idea_vote_form</field>
         <field name="model">idea.management.vote</field>

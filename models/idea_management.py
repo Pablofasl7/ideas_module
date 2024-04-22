@@ -58,6 +58,8 @@ class IdeaManagement(models.Model):
       ('cancelada', 'Cancelada')],
       string = 'Estado',
       default = 'revision')
+   
+   assigned = fields.Boolean(string = 'Assigned', compute='_compute_assigned')
 
    company_id = fields.Many2one(comodel_name='res.partner', string='Compañía')
    user_id = fields.Many2one(comodel_name='res.users', string='Empleados')
@@ -115,3 +117,8 @@ class IdeaManagement(models.Model):
             'default_idea_name': self.name,
         }
     }
+   
+   @api.depends('user_id')
+   def _compute_assigned(self):
+      for record in self:
+         record.assigned = self.user_id and True or False
