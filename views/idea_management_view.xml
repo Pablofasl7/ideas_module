@@ -24,7 +24,7 @@
                     <button string="En proceso" name="proceso" type="object" invisible="state!='aprobada'" />
                     <button string="Completar" name="completada" type="object" invisible="state not in 'proceso,aprobada'"/>
                     <button string="Votar" name="open_vote_form" type="object" invisible="state not in 'proceso'"/>
-                    <button string="Cancelar" name="cancelada" type="object" invisible="state not in 'revision,aprobada,proceso,completada'"/>
+                    <button string="Cancelar" name="cancelada" type="object" invisible="state not in 'revision,aprobada,proceso'"/>
                     <field name="state" widget="statusbar"/>
                 </header>
                     
