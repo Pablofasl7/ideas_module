@@ -30,13 +30,14 @@ class IdeaManagementVote(models.Model):
             else:
                raise ValidationError(_("No puedes votar dos veces a la misma idea."))
 
-   # Obtenemos el voto del usuario actual y si le damos al botón cancelar, no se guardamos el boto (lo eliminamos)
+   # Obtenemos el voto del usuario actual y si le damos al botón cancelar, no guardamos el boto (lo eliminamos)
    def cancel_vote(self):
       id_vote = self.env.context.get('active_id')  
       if id_vote:
          idea_record = self.env['idea.management'].browse(id_vote) 
          if idea_record:
-            idea_record.vote_ids.unlink()  
+            last_vote = idea_record.vote_ids[-1] 
+            last_vote.unlink()  
    
 class IdeaManagement(models.Model):
    _name = 'idea.management'
