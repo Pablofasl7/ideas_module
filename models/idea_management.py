@@ -1,6 +1,7 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 from datetime import timedelta
+import base64
 
 def _date_default_today(self):
    return fields.Date.today() # Para que nos devuelva el día actual en el que estamos.
@@ -17,18 +18,25 @@ class IdeaManagementVote(models.Model):
    idea_id = fields.Many2one('idea.management', string='Nombre de la idea', readonly=True)
    
    def save_vote(self):
-    self.ensure_one()
-    existing_vote = self.idea_id.vote_ids.filtered(lambda v: v.user_id == self.user_id)
-    if existing_vote:
-        existing_vote.write({
-            'rating': self.rating,
-            'comments': self.comments,
-        })
-        return {'type': 'ir.actions.act_window_close'}  
-    else:
-        # Si no existe, no hace nada
-        return {'type': 'ir.actions.act_window_close'}
+      print(self.user_id.name)
+      for idea in self.env['idea.management'].search([]):
+         for user in idea.user_id:
+            if user.id != self.user_id.id:
+               new_vote = self.env['idea.management.vote'].write({
+                     'user_id': self.user_id.id,
+                     'rating': self.rating,
+                     'comments': self.comments,
+               })
+            else:
+               raise ValidationError(_("No puedes votar dos veces a la misma idea."))
 
+   # Obtenemos el voto del usuario actual y si le damos al botón cancelar, no se guardamos el boto (lo eliminamos)
+   def cancel_vote(self):
+      id_vote = self.env.context.get('active_id')  
+      if id_vote:
+         idea_record = self.env['idea.management'].browse(id_vote) 
+         if idea_record:
+            idea_record.vote_ids.unlink()  
    
 class IdeaManagement(models.Model):
    _name = 'idea.management'
@@ -39,7 +47,7 @@ class IdeaManagement(models.Model):
    _primary_email = 'email_from'
    vote_ids = fields.One2many('idea.management.vote', 'idea_id', string='Votes')
 
-   name = fields.Char(string = 'Propuesta')
+   name = fields.Char(string = 'Propuesta', required=True)
    create_date = fields.Date(string = 'Fecha de creación', default=_date_default_today)
    deadline = fields.Date(string = 'Fecha límite')
    idea_type = fields.Selection(
@@ -101,23 +109,32 @@ class IdeaManagement(models.Model):
    def _update_deadline(self):
       if self.create_date:
          self.deadline = self.create_date + timedelta(days=5)
-
-   def open_vote_form(self):
-    view_id = self.env.ref('ideas_module.view_idea_vote_form').id
-    return {
-        'name': 'Voto del Usuario',
-        'view_type': 'form',
-        'view_mode': 'form',
-        'res_model': 'idea.management.vote',
-        'views': [(view_id, 'form')],
-        'type': 'ir.actions.act_window',
-        'target': 'new',
-        'context': {
-            'default_idea_id': self.id,
-            'default_idea_name': self.name,
-        }
-    }
    
+   def open_vote_form(self):
+      print('AAAAAAAAAAAAAAAAAAAAAAA')
+      print('AAAAAAAAAAAAAAAAAAAAAAA')
+      print('AAAAAAAAAAAAAAAAAAAAAAA')
+      print(self.env.context)
+      print(self.env.context)
+      print(self.env.context)
+      print(self.env.context)
+      view_id = self.env.ref('ideas_module.view_idea_vote_form').id
+
+      return {
+         'name': 'Voto del Usuario',
+         'view_type': 'form',
+         'view_mode': 'form',
+         'res_model': 'idea.management.vote',
+         'views': [(view_id, 'form')],
+         'type': 'ir.actions.act_window',
+         'target': 'new',
+         'context': {
+               'default_idea_id': self.id,
+               'default_idea_name': self.name,
+         },
+      }
+   
+      
    @api.depends('user_id')
    def _compute_assigned(self):
       for record in self:
@@ -129,4 +146,4 @@ class IdeaManagement(models.Model):
    def _compute_ideas_user(self):
       for record in self:
          other_tickets = self.env['idea.management'].search([('user_id', '=', record.user_id.id)])
-         record.ideas_usuario = len(other_tickets)      
+         record.ideas_usuario = len(other_tickets)

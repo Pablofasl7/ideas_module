@@ -103,7 +103,6 @@
             <form string="Voto">
                 <header>
                     <field name="idea_id" readonly="1"/>
-                    <field name="user_id" invisible="1"/>
                 </header>
                 <h1>Rating</h1>
                 <field name="rating" widget="priority"/>
@@ -112,12 +111,12 @@
                         <field name="comments"/>
                     </group>
                     <group>
-                        <field name="user_id"/>
+                        <field name="user_id" readonly="1"/>
                     </group>
                 </sheet>
                 <footer>
                     <button string="Guardar" name="save_vote" type="object" class="btn-primary"/>
-                    <button string="Cancelar" special="cancel" class="btn-secondary"/>                 
+                    <button string="Cancelar" name="cancel_vote" type="object" class="btn-secondary"/>                 
                 </footer>
             </form>
         </field>
