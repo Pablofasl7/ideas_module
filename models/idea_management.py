@@ -14,23 +14,23 @@ class IdeaManagementVote(models.Model):
       [('0', 'Very Low'), ('1', 'Baja'), ('2', 'Normal'), ('3', 'Alto'), ('4', 'Muy alto'), ('5', 'Excelente')],
       string="Valoraciones")
    comments = fields.Char(string="Comentarios")
-   user_id = fields.Many2one(comodel_name='res.users', string='Usuario')
+   employee_id = fields.Many2one(comodel_name='hr.employee', string='Empleado')
    idea_id = fields.Many2one('idea.management', string='Nombre de la idea', readonly=True)
    
    def save_vote(self):
-      print(self.user_id.name)
+      print(self.employee_id.name)
       for idea in self.env['idea.management'].search([]):
-         for user in idea.user_id:
-            if user.id != self.user_id.id:
+         for employee in idea.employee_id:
+            if employee.id != self.employee_id.id:
                new_vote = self.env['idea.management.vote'].write({
-                     'user_id': self.user_id.id,
-                     'rating': self.rating,
-                     'comments': self.comments,
+                     'employee_id': self.employee_id.id,
+                        'rating': self.rating,
+                        'comments': self.comments,
                })
             else:
                raise ValidationError(_("No puedes votar dos veces a la misma idea."))
 
-   # Obtenemos el voto del usuario actual y si le damos al botón cancelar, no guardamos el boto (lo eliminamos)
+   # Obtenemos el voto del empleado actual y si le damos al botón cancelar, no guardamos el boto (lo eliminamos)
    def cancel_vote(self):
       id_vote = self.env.context.get('active_id')  
       if id_vote:
@@ -70,10 +70,10 @@ class IdeaManagement(models.Model):
    
    assigned = fields.Boolean(string = 'Assigned', compute='_compute_assigned')
 
-   partner_id = fields.Many2one(comodel_name='res.partner', string='Compañía')
-   user_id = fields.Many2one(comodel_name='res.users', string='Usuario')
+   partner_id = fields.Many2one(comodel_name='res.partner', string='Compañía', compute='_compute_compañia', store=True)
+   employee_id = fields.Many2one(comodel_name='hr.employee', string='Empleado')
    email_from = fields.Char(string='Email from')
-   voter_id = fields.Many2one('res.users', string='Usuario que vota')
+   voter_id = fields.Many2one('hr.employee', string='Empleado que vota')
    
    def aprobar(self):
       self.ensure_one()
@@ -112,17 +112,10 @@ class IdeaManagement(models.Model):
          self.deadline = self.create_date + timedelta(days=5)
    
    def open_vote_form(self):
-      print('AAAAAAAAAAAAAAAAAAAAAAA')
-      print('AAAAAAAAAAAAAAAAAAAAAAA')
-      print('AAAAAAAAAAAAAAAAAAAAAAA')
-      print(self.env.context)
-      print(self.env.context)
-      print(self.env.context)
-      print(self.env.context)
       view_id = self.env.ref('ideas_module.view_idea_vote_form').id
 
       return {
-         'name': 'Voto del Usuario',
+         'name': 'Voto del Empleado',
          'view_type': 'form',
          'view_mode': 'form',
          'res_model': 'idea.management.vote',
@@ -135,16 +128,30 @@ class IdeaManagement(models.Model):
          },
       }
    
-      
-   @api.depends('user_id')
+   @api.depends('employee_id')
    def _compute_assigned(self):
       for record in self:
-         record.assigned = self.user_id and True or False
+         record.assigned = self.employee_id and True or False
 
-   ideas_usuario = fields.Integer(string='Número de ideas del usuario', compute='_compute_ideas_user')
+   ideas_empleado = fields.Integer(string='Número de ideas del empleado', compute='_compute_ideas_employee')
 
-   @api.depends('user_id')
-   def _compute_ideas_user(self):
+   @api.depends('employee_id')
+   def _compute_ideas_employee(self):
       for record in self:
-         other_tickets = self.env['idea.management'].search([('user_id', '=', record.user_id.id)])
-         record.ideas_usuario = len(other_tickets)
+         other_tickets = self.env['idea.management'].search([('employee_id', '=', record.employee_id.id)])
+         record.ideas_empleado = len(other_tickets)
+      
+   @api.depends('employee_id')
+   def _compute_compañia(self):
+      for record in self:
+         if record.employee_id:
+               record.partner_id = record.employee_id.company_id.partner_id
+         else:
+               record.partner_id = False
+
+   # @api.onchange('employee_id')
+   # def _onchange_empleado(self):
+   #    if self.employee_id:
+   #       self.partner_id = self.employee_id.company_id.partner_id.id
+   #    else:
+   #       self.partner_id = False

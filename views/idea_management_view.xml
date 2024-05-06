@@ -5,7 +5,7 @@
         <field name="model">idea.management</field>
         <field name="arch" type="xml">
             <tree string="Idea">
-                <field name="user_id"/>
+                <field name="employee_id"/>
                 <field name="name"/>
                 <field name="state"/> 
                 <field name="idea_type"/>                
@@ -36,15 +36,15 @@
                     </div>
                     <group>
                         <group>
-                            <field name="user_id"/>
+                            <field name="employee_id"/>
                             <field name="create_date"/>
                             <field name="deadline"/>
                         </group>
 
                         <group>
-                            <field name="partner_id" context="{'default_is_company': True}" domain="[('is_company', '=', True)]"/>                       
+                            <field name="partner_id" context="{'default_is_company': True}"/>                       
                             <field name="idea_type"/>
-                            <field name="ideas_usuario"/>                            
+                            <field name="ideas_empleado"/>                            
                             <field name="price"/>
                         </group>
                     </group>
@@ -54,10 +54,10 @@
                             <field name="details"/> 
                         </page>
 
-                        <page string="Votos de los usuarios">
+                        <page string="Votos de los Empleados">
                             <field name="vote_ids" readonly="1">
                                 <tree string="Votes" readonly="1">
-                                    <field name="user_id"/>
+                                    <field name="employee_id"/>
                                     <field name="rating"/>
                                     <field name="comments"/>
                                 </tree>
@@ -79,15 +79,15 @@
         <field name="model">idea.management</field>
         <field name="arch" type="xml">
             <search string="Ticket">
-                <!-- Filtrar por nombre y por usuario asignado -->
+                <!-- Filtrar por nombre y por empleado asignado -->
                 <field name="name"/>
-                <field name= "user_id"/>
+                <field name= "employee_id"/>
                 <!-- Filtrar por tipos de idea -->
                 <filter string="Mejoras" name="idea_type" domain="[('idea_type', '=', 'mejoras')]"/>
                 <filter string="Plantear proyecto" name="idea_type" domain="[('idea_type', '=', 'proyecto')]"/>
                 <filter string="Otros" name="idea_type" domain="[('idea_type', '=', 'otros')]"/>
                 <!-- Agrupar -->
-                <filter string="Usuario" name="assigned_to" context="{'group_by':'user_id'}"/>
+                <filter string="Empleado" name="assigned_to" context="{'group_by':'employee_id'}"/>
                 <filter string="Estado" name="state" context="{'group_by':'state'}"/>
                 <separator string="Separador"/>
                 <filter string="Tipo de idea" name="idea_type" context="{'group_by':'idea_type'}"/>
@@ -111,7 +111,7 @@
                         <field name="comments"/>
                     </group>
                     <group>
-                        <field name="user_id" readonly="1"/>
+                        <field name="employee_id" readonly="1"/>
                     </group>
                 </sheet>
                 <footer>

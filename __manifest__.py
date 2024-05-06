@@ -9,6 +9,7 @@
     "depends": [
         "base",
         "mail",
+        "hr",
     ],
     "data": [
         "security/idea_security.xml",
