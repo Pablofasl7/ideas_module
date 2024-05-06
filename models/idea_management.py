@@ -13,9 +13,9 @@ class IdeaManagementVote(models.Model):
    rating = fields.Selection(
       [('0', 'Very Low'), ('1', 'Baja'), ('2', 'Normal'), ('3', 'Alto'), ('4', 'Muy alto'), ('5', 'Excelente')],
       string="Valoraciones")
-   comments = fields.Char(string="Comentarios")
-   employee_id = fields.Many2one(comodel_name='hr.employee', string='Empleado')
-   idea_id = fields.Many2one('idea.management', string='Nombre de la idea', readonly=True)
+   comments = fields.Char(string="Comentarios", help="Aquí puedes dejar comentarios que leerán tanto los administradores como los demás usuarios (por ejemplo para mejorar la idea).")
+   employee_id = fields.Many2one(comodel_name='hr.employee', string='Empleado', help="El empleado que ha votado la idea.")
+   idea_id = fields.Many2one('idea.management', string='Nombre de la idea', readonly=True, help="La idea que ha votado.")
    
    def save_vote(self):
       print(self.employee_id.name)
@@ -46,19 +46,19 @@ class IdeaManagement(models.Model):
                'mail.thread.blacklist',
                'mail.activity.mixin']
    _primary_email = 'email_from'
-   vote_ids = fields.One2many('idea.management.vote', 'idea_id', string='Votes')
+   vote_ids = fields.One2many('idea.management.vote', 'idea_id', string='Votes', help="Votos de los empleados.")
 
-   name = fields.Char(string = 'Propuesta', required=True)
-   create_date = fields.Date(string = 'Fecha de creación', default=_date_default_today)
-   deadline = fields.Date(string = 'Fecha límite')
+   name = fields.Char(string = 'Propuesta', required=True, help = 'Esto es el nombre de la propuesta / idea')
+   create_date = fields.Date(string = 'Fecha de creación', default=_date_default_today, help = 'Fecha de creación')
+   deadline = fields.Date(string = 'Fecha límite', help = 'Fecha de finalización')
    idea_type = fields.Selection(
       [('mejoras', 'Mejoras'),
       ('proyecto', 'Plantear proyecto'),
       ('otros', 'Otros'),], 
       string="Tipo de idea")
    
-   details = fields.Text()
-   price = fields.Float(string="Coste estimado")
+   details = fields.Text(help = 'Descripción de la idea')
+   price = fields.Float(string="Coste estimado", help = 'Coste estimado de la idea')
    state = fields.Selection(
       [('revision', 'En revision'), 
       ('aprobada','Aprobada'),
@@ -70,10 +70,10 @@ class IdeaManagement(models.Model):
    
    assigned = fields.Boolean(string = 'Assigned', compute='_compute_assigned')
 
-   partner_id = fields.Many2one(comodel_name='res.partner', string='Compañía', compute='_compute_compañia', store=True)
-   employee_id = fields.Many2one(comodel_name='hr.employee', string='Empleado')
+   partner_id = fields.Many2one(comodel_name='res.partner', string='Compañía', compute='_compute_compañia', store=True, help = 'Compañía')
+   employee_id = fields.Many2one(comodel_name='hr.employee', string='Empleado', help="Empleado que ha tenido la idea.")
    email_from = fields.Char(string='Email from')
-   voter_id = fields.Many2one('hr.employee', string='Empleado que vota')
+   voter_id = fields.Many2one('hr.employee', string='Empleado que vota', help="Empleado que ha votado la idea.")
    
    def aprobar(self):
       self.ensure_one()
