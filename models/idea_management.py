@@ -48,7 +48,7 @@ class IdeaManagement(models.Model):
    _primary_email = 'email_from'
    vote_ids = fields.One2many('idea.management.vote', 'idea_id', string='Votes', help="Votos de los empleados.")
 
-   name = fields.Char(string = 'Propuesta', required=True, help = 'Esto es el nombre de la propuesta / idea')
+   name = fields.Char(string = 'Idea: ', required=True, help = 'Esto es el nombre de la propuesta / idea')
    create_date = fields.Date(string = 'Fecha de creación', default=_date_default_today, help = 'Fecha de creación')
    deadline = fields.Date(string = 'Fecha límite', help = 'Fecha de finalización')
    idea_type = fields.Selection(
@@ -74,6 +74,13 @@ class IdeaManagement(models.Model):
    employee_id = fields.Many2one(comodel_name='hr.employee', string='Empleado', help="Empleado que ha tenido la idea.")
    email_from = fields.Char(string='Email from')
    voter_id = fields.Many2one('hr.employee', string='Empleado que vota', help="Empleado que ha votado la idea.")
+
+   # Para poder mostrar la cantidad de ideas por estado en la vista graph.
+   revision_count = fields.Integer(string="En Revisión", compute='_compute_state_counts', store=True)
+   aprobada_count = fields.Integer(string="Aprobadas", compute='_compute_state_counts', store=True)
+   proceso_count = fields.Integer(string="En Proceso", compute='_compute_state_counts', store=True)
+   completada_count = fields.Integer(string="Completadas", compute='_compute_state_counts', store=True)
+   cancelada_count = fields.Integer(string="Canceladas", compute='_compute_state_counts', store=True)
    
    def aprobar(self):
       self.ensure_one()
@@ -148,6 +155,22 @@ class IdeaManagement(models.Model):
                record.partner_id = record.employee_id.company_id.partner_id
          else:
                record.partner_id = False
+
+   @api.depends('state')
+   def _compute_state_counts(self):
+      for record in self:
+         # record.revision_count = len(self.filtered(lambda r: r.state == 'revision'))
+         # record.aprobada_count = len(self.filtered(lambda r: r.state == 'aprobada'))
+         # record.proceso_count = len(self.filtered(lambda r: r.state == 'proceso'))
+         # record.completada_count = len(self.filtered(lambda r: r.state == 'completada'))
+         # record.cancelada_count = len(self.filtered(lambda r: r.state == 'cancelada'))
+
+         self.revision_count = len(self.filtered(lambda r: r.state == 'revision'))
+         self.aprobada_count = len(self.filtered(lambda r: r.state == 'aprobada'))
+         self.proceso_count = len(self.filtered(lambda r: r.state == 'proceso'))
+         self.completada_count = len(self.filtered(lambda r: r.state == 'completada'))
+         self.cancelada_count = len(self.filtered(lambda r: r.state == 'cancelada'))
+        
 
    # @api.onchange('employee_id')
    # def _onchange_empleado(self):

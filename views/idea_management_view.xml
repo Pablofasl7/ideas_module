@@ -96,6 +96,36 @@
         </field>
     </record>
 
+
+    <record id="view_idea_management_calendar" model="ir.ui.view">
+        <field name="name">view.idea_management.calendar</field>
+        <field name="model">idea.management</field>
+        <field name="arch" type="xml">
+            <calendar string="Ideas" date_start="create_date" color="employee_id" hide_time="true" event_limit="5">
+                <field name="employee_id" avatar_field="image_128"/>
+                <field name="name"/>
+                <field name="employee_id" filters="1" invisible="1"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="view_idea_management_graph" model="ir.ui.view">
+        <field name="name">view.idea_management.graph</field>
+        <field name="model">idea.management</field>
+        <field name="arch" type="xml">
+            <graph string="Idea">
+                <field name="employee_id"/>
+                <field name="state"/>
+                <field name="price"/>
+                <field name="revision_count" string="En Revisión"/>
+                <field name="aprobada_count" string="Aprobadas"/>
+                <field name="proceso_count" string="En Proceso"/>
+                <field name="completada_count" string="Completadas"/>
+                <field name="cancelada_count" string="Canceladas"/>
+            </graph>
+        </field>
+    </record>
+
     <record id="view_idea_vote_form" model="ir.ui.view">
         <field name="name">view.idea_vote_form</field>
         <field name="model">idea.management.vote</field>
