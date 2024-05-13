@@ -17,19 +17,25 @@ class IdeaManagementVote(models.Model):
    employee_id = fields.Many2one(comodel_name='hr.employee', string='Empleado', help="El empleado que ha votado la idea.")
    idea_id = fields.Many2one('idea.management', string='Nombre de la idea', readonly=True, help="La idea que ha votado.")
    
+   registered_votes = []
+
    def save_vote(self):
         for vote in self:
-            if vote.idea_id and vote.employee_id:
-                existing_vote = self.env['idea.management.vote'].search([('idea_id', '=', vote.idea_id.id), ('employee_id', '=', vote.employee_id.id)])
-                if existing_vote:
-                    raise ValidationError(_("No puedes votar dos veces la misma idea."))
-                else:
-                    vote.create({
-                        'employee_id': vote.employee_id.id,
-                        'idea_id': vote.idea_id.id,
-                        'rating': vote.rating,
-                        'comments': vote.comments,
-                    })
+            existing_vote = next((v for v in self.registered_votes if v['idea_id'] == vote.idea_id.id and v['employee_id'] == vote.employee_id.id), None)
+            if not existing_vote:
+                self.env['idea.management.vote'].write({
+                    'employee_id': vote.employee_id.id,
+                    'rating': vote.rating,
+                    'comments': vote.comments,
+                    'idea_id': vote.idea_id.id,
+                })
+                self.registered_votes.append({
+                    'employee_id': vote.employee_id.id,
+                    'idea_id': vote.idea_id.id,
+                })
+            else:
+                raise ValidationError("No puedes votar dos veces la misma idea.")
+               
 
    # Obtenemos el voto del empleado actual y si le damos al botón cancelar, no guardamos el boto (lo eliminamos)
    def cancel_vote(self):
@@ -49,7 +55,7 @@ class IdeaManagement(models.Model):
    _primary_email = 'email_from'
    vote_ids = fields.One2many('idea.management.vote', 'idea_id', string='Votes', help="Votos de los empleados.")
 
-   name = fields.Char(string = 'Idea: ', required=True, help = 'Esto es el nombre de la propuesta / idea')
+   name = fields.Char(string = 'Propuesta', required=True, help = 'Esto es el nombre de la propuesta / idea')
    create_date = fields.Date(string = 'Fecha de creación', default=_date_default_today, help = 'Fecha de creación')
    deadline = fields.Date(string = 'Fecha límite', help = 'Fecha de finalización')
    idea_type = fields.Selection(
