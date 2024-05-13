@@ -126,6 +126,63 @@
         </field>
     </record>
 
+    <record id="view_idea_management_pivot" model="ir.ui.view">
+        <field name="name">view.idea_management.pivot</field>
+        <field name="model">idea.management</field>
+        <field name="arch" type="xml">
+            <pivot string="Ticket">
+                <field name="employee_id" type="row"/>
+                <field name="create_date" interval="month" type="col"/>
+                <field name="price" widget="monetary"/>                    
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_idea_management_kanban" model="ir.ui.view">
+        <field name="name">view.idea_management.kanban</field>
+        <field name="model">idea.management</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="employee_id">
+                <field name="state" invisible="1"/>
+                <field name="idea_type" invisible="1"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_content oe_kanban_global_click">
+                            <div class="o_kanban_record_title">
+                                <strong><field name="name"/></strong>
+                                <span t-if="idea_type"/>
+                            </div>
+                            <div class="o_kanban_record_subtitle">
+                                <field name="create_date"/>
+                                <field name="state"/>
+                            </div>
+                            <div class="oe_kanban_bottom_left">
+                                <div class="o_kanban_inline_block">
+                                    <field name="activity_ids" widget="kanban_activity"/>
+                                </div>
+                            </div>
+                            <div class="oe_kanban_bottom_right">
+                                <field name="employee_id" widget="many2one_avatar_user"/>
+                            </div>
+                            <!-- Agregar colores y etiquetas según el estado o tipo de idea -->
+                            <div class="o_kanban_tags">
+                                <span t-if="state === 'revision'" class="o_tag o_tag_color_green">En revisión</span>
+                                <span t-if="state === 'aprobada'" class="o_tag o_tag_color_blue">Aprobada</span>
+                                <!-- Agregar más etiquetas para otros estados -->
+                            </div>
+                            <div class="o_kanban_quick_actions">
+                                <button name="change_state" class="btn btn-sm btn-primary" type="object" title="Cambiar estado">Cambiar Estado</button>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    
+    
+    
+
     <record id="view_idea_vote_form" model="ir.ui.view">
         <field name="name">view.idea_vote_form</field>
         <field name="model">idea.management.vote</field>
@@ -141,7 +198,7 @@
                         <field name="comments"/>
                     </group>
                     <group>
-                        <field name="employee_id" readonly="1"/>
+                        <field name="employee_id" readonly="True"/>
                     </group>
                 </sheet>
                 <footer>

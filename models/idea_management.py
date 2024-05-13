@@ -18,17 +18,18 @@ class IdeaManagementVote(models.Model):
    idea_id = fields.Many2one('idea.management', string='Nombre de la idea', readonly=True, help="La idea que ha votado.")
    
    def save_vote(self):
-      print(self.employee_id.name)
-      for idea in self.env['idea.management'].search([]):
-         for employee in idea.employee_id:
-            if employee.id != self.employee_id.id:
-               new_vote = self.env['idea.management.vote'].write({
-                     'employee_id': self.employee_id.id,
-                        'rating': self.rating,
-                        'comments': self.comments,
-               })
-            else:
-               raise ValidationError(_("No puedes votar dos veces a la misma idea."))
+        for vote in self:
+            if vote.idea_id and vote.employee_id:
+                existing_vote = self.env['idea.management.vote'].search([('idea_id', '=', vote.idea_id.id), ('employee_id', '=', vote.employee_id.id)])
+                if existing_vote:
+                    raise ValidationError(_("No puedes votar dos veces la misma idea."))
+                else:
+                    vote.create({
+                        'employee_id': vote.employee_id.id,
+                        'idea_id': vote.idea_id.id,
+                        'rating': vote.rating,
+                        'comments': vote.comments,
+                    })
 
    # Obtenemos el voto del empleado actual y si le damos al botón cancelar, no guardamos el boto (lo eliminamos)
    def cancel_vote(self):
@@ -117,6 +118,13 @@ class IdeaManagement(models.Model):
    def _update_deadline(self):
       if self.create_date:
          self.deadline = self.create_date + timedelta(days=5)
+
+   # Comprobamos que la fecha límite no sea anterior a la fecha actual. Y en ese caso establecemos la idea en completada.
+   @api.depends('deadline')
+   def _check_deadline_expired(self):
+      for record in self:
+         if record.deadline and record.deadline < fields.Date.today():
+               record.state = 'completada'
    
    def open_vote_form(self):
       view_id = self.env.ref('ideas_module.view_idea_vote_form').id
@@ -132,6 +140,7 @@ class IdeaManagement(models.Model):
          'context': {
                'default_idea_id': self.id,
                'default_idea_name': self.name,
+               'default_employee_id': self.env.user.employee_id.id,
          },
       }
    
@@ -158,18 +167,20 @@ class IdeaManagement(models.Model):
 
    @api.depends('state')
    def _compute_state_counts(self):
-      for record in self:
-         # record.revision_count = len(self.filtered(lambda r: r.state == 'revision'))
-         # record.aprobada_count = len(self.filtered(lambda r: r.state == 'aprobada'))
-         # record.proceso_count = len(self.filtered(lambda r: r.state == 'proceso'))
-         # record.completada_count = len(self.filtered(lambda r: r.state == 'completada'))
-         # record.cancelada_count = len(self.filtered(lambda r: r.state == 'cancelada'))
+      self.revision_count = len(self.filtered(lambda r: r.state == 'revision'))
+      self.aprobada_count = len(self.filtered(lambda r: r.state == 'aprobada'))
+      self.proceso_count = len(self.filtered(lambda r: r.state == 'proceso'))
+      self.completada_count = len(self.filtered(lambda r: r.state == 'completada'))
+      self.cancelada_count = len(self.filtered(lambda r: r.state == 'cancelada'))
 
-         self.revision_count = len(self.filtered(lambda r: r.state == 'revision'))
-         self.aprobada_count = len(self.filtered(lambda r: r.state == 'aprobada'))
-         self.proceso_count = len(self.filtered(lambda r: r.state == 'proceso'))
-         self.completada_count = len(self.filtered(lambda r: r.state == 'completada'))
-         self.cancelada_count = len(self.filtered(lambda r: r.state == 'cancelada'))
+   def change_state(self):
+        for idea in self:
+            if idea.state == 'revision':
+                idea.state = 'aprobada'
+            elif idea.state == 'aprobada':
+                idea.state = 'proceso'
+            elif idea.state == 'proceso':
+                idea.state = 'completada'
         
 
    # @api.onchange('employee_id')
