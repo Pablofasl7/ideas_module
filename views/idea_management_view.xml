@@ -46,6 +46,7 @@
                             <field name="idea_type"/>
                             <field name="ideas_empleado"/>                            
                             <field name="price"/>
+                            <field name="active" invisible="True"/>
                         </group>
                     </group>
 
@@ -86,6 +87,8 @@
                 <filter string="Mejoras" name="idea_type" domain="[('idea_type', '=', 'mejoras')]"/>
                 <filter string="Plantear proyecto" name="idea_type" domain="[('idea_type', '=', 'proyecto')]"/>
                 <filter string="Otros" name="idea_type" domain="[('idea_type', '=', 'otros')]"/>
+                <separator/>
+                <filter string="Archivado" name="inactive" domain="[('active', '=', False)]"/>
                 <!-- Agrupar -->
                 <filter string="Empleado" name="assigned_to" context="{'group_by':'employee_id'}"/>
                 <filter string="Estado" name="state" context="{'group_by':'state'}"/>

@@ -62,7 +62,8 @@ class IdeaManagement(models.Model):
       [('mejoras', 'Mejoras'),
       ('proyecto', 'Plantear proyecto'),
       ('otros', 'Otros'),], 
-      string="Tipo de idea")
+      string="Tipo de idea",
+      default="otros")
    
    details = fields.Text(help = 'Descripción de la idea')
    price = fields.Float(string="Coste estimado", help = 'Coste estimado de la idea')
@@ -74,6 +75,9 @@ class IdeaManagement(models.Model):
       ('cancelada', 'Cancelada')],
       string = 'Estado',
       default = 'revision')
+   
+   active = fields.Boolean(string='Activo', default=True, help = 'Para archivar la idea.')
+   archive_cancelled = fields.Boolean(compute='_compute_archive_cancelled', store=True)
    
    assigned = fields.Boolean(string = 'Assigned', compute='_compute_assigned')
 
@@ -187,11 +191,13 @@ class IdeaManagement(models.Model):
                 idea.state = 'proceso'
             elif idea.state == 'proceso':
                 idea.state = 'completada'
-        
 
-   # @api.onchange('employee_id')
-   # def _onchange_empleado(self):
-   #    if self.employee_id:
-   #       self.partner_id = self.employee_id.company_id.partner_id.id
-   #    else:
-   #       self.partner_id = False
+   @api.depends('state', 'active')
+   def _compute_archive_cancelled(self):
+      for idea in self:
+         if idea.state == 'cancelada' and idea.active:
+               idea._archive_idea()
+
+   def _archive_idea(self):
+    for idea in self:
+        idea.active = False            
