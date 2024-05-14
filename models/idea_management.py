@@ -58,6 +58,10 @@ class IdeaManagement(models.Model):
    name = fields.Char(string = 'Propuesta', required=True, help = 'Esto es el nombre de la propuesta / idea')
    create_date = fields.Date(string = 'Fecha de creación', default=_date_default_today, help = 'Fecha de creación')
    deadline = fields.Date(string = 'Fecha límite', help = 'Fecha de finalización')
+   
+   # Esto es un campo calculado para los días entre la fecha de creación y la fecha límite (para mostrar en la vista calendario).
+   days_duration = fields.Integer(compute='_compute_days_duration', string='Duración (días): ', store=True)
+
    idea_type = fields.Selection(
       [('mejoras', 'Mejoras'),
       ('proyecto', 'Plantear proyecto'),
@@ -135,6 +139,15 @@ class IdeaManagement(models.Model):
       for record in self:
          if record.deadline and record.deadline < fields.Date.today():
                record.state = 'completada'
+
+   @api.depends('create_date', 'deadline')
+   def _compute_days_duration(self):
+      for idea in self:
+         if idea.create_date and idea.deadline:
+               duration = (idea.deadline - idea.create_date).days
+               idea.days_duration = duration if duration >= 0 else 0
+         else:
+               idea.days_duration = 0            
    
    def open_vote_form(self):
       view_id = self.env.ref('ideas_module.view_idea_vote_form').id

@@ -100,7 +100,6 @@
         </field>
     </record>
 
-
     <record id="view_idea_management_calendar" model="ir.ui.view">
         <field name="name">view.idea_management.calendar</field>
         <field name="model">idea.management</field>
@@ -108,7 +107,9 @@
             <calendar string="Ideas" date_start="create_date" color="employee_id" hide_time="true" event_limit="5">
                 <field name="employee_id" avatar_field="image_128"/>
                 <field name="name"/>
-                <field name="employee_id" filters="1" invisible="1"/>
+                <field name="create_date"/>
+                <field name="deadline"/>
+                <field name="days_duration"/>
             </calendar>
         </field>
     </record>
