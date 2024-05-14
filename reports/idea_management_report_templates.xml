@@ -15,14 +15,14 @@
                         <p class="m-0" t-field="doc.create_date"/>
                     </div>
                     <div t-if="doc.partner_id" class="col-auto col-3 mw-100 mb-2">
-                        <strong>Partner:</strong>
+                        <strong>Compañía:</strong>
                         <p class="m-0" t-field="doc.partner_id"/>
                     </div>
                 </div>
                 <table class="table table-sm o_main_table">
                     <thead style="display: table-row-group">
                         <tr>
-                            <th name="th_user_id" class="text-left bg-primary text-light">Usuario</th>
+                            <th name="th_employee_id" class="text-left bg-primary text-light">Usuario</th>
                             <th name="th_rating" class="text-right bg-primary text-light">Valoración</th>
                             <th name="th_comments" class="text-right bg-primary text-light">Comentario</th>
                         </tr>
@@ -30,8 +30,8 @@
                     <tbody class="sale_tbody">
                         <t t-foreach="doc.vote_ids" t-as="vote">
                             <tr class="bg-200 font-weight-bold">
-                                <td name="td_user_id">
-                                    <span t-field="vote.user_id"/>
+                                <td name="td_employee_id">
+                                    <span t-field="vote.employee_id"/>
                                 </td>
                                 <td name="td_rating" class="text-right">
                                     <span t-field="vote.rating"/>
