@@ -200,4 +200,25 @@ class IdeaManagement(models.Model):
 
    def _archive_idea(self):
     for idea in self:
-        idea.active = False            
+        idea.active = False
+
+   # def action_idea_send_by_email(self):
+   #      self.ensure_one()
+   #      ctx = {
+   #          'default_model': 'idea.management',
+   #          'default_res_ids': self.ids,
+   #          'default_composition_mode': 'comment',
+   #          'mark_so_as_sent': True,
+   #          'default_email_layout_xmlid': 'mail.mail_notification_layout_with_responsible_signature',
+   #          'proforma': self.env.context.get('proforma', False),
+   #          'force_email': True,
+   #      }
+   #      return {
+   #          'type': 'ir.actions.act_window',
+   #          'view_mode': 'form',
+   #          'res_model': 'mail.compose.message',
+   #          'views': [(False, 'form')],
+   #          'view_id': False,
+   #          'target': 'new',
+   #          'context': ctx,
+   #      }

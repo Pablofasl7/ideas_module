@@ -24,6 +24,7 @@
                     <button string="En proceso" name="proceso" type="object" invisible="state!='aprobada'" />
                     <button string="Completar" name="completada" type="object" invisible="state not in 'proceso,aprobada'"/>
                     <button string="Votar" name="open_vote_form" type="object" invisible="state not in 'proceso'"/>
+                    <!-- <button string="Enviar por email" name="action_idea_send_by_email" type="object" invisible="state not in 'completada'"/> -->
                     <button string="Cancelar" name="cancelada" type="object" invisible="state not in 'revision,aprobada,proceso'"/>
                     <field name="state" widget="statusbar"/>
                 </header>
@@ -146,7 +147,7 @@
         <field name="model">idea.management</field>
         <field name="arch" type="xml">
             <kanban default_group_by="employee_id">
-            <link rel="stylesheet" href="/ideas_module/static/src/css/style.css"/>
+                <progressbar field="state" colors="{&quot;revision&quot;: &quot;secondary&quot;, &quot;aprobada&quot;: &quot;warning&quot;, &quot;proceso&quot;: &quot;info&quot;, &quot;completada&quot;: &quot;success&quot;, &quot;cancelada&quot;: &quot;danger&quot;}"/>
                 <field name="state" invisible="1"/>
                 <field name="idea_type" invisible="1"/>
                 <templates>
@@ -167,10 +168,6 @@
                             </div>
                             <div class="oe_kanban_bottom_right">
                                 <field name="employee_id" widget="many2one_avatar_user"/>
-                            </div>
-                            <div class="o_kanban_tags">
-                                <span t-if="state === 'revision'" class="o_tag o_tag_color_green">En revisión</span>
-                                <span t-if="state === 'aprobada'" class="o_tag o_tag_color_blue">Aprobada</span>
                             </div>
                             <div class="o_kanban_quick_actions">
                                 <button name="change_state" class="btn btn-sm btn-primary" type="object" title="Cambiar estado">Cambiar Estado</button>
