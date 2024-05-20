@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
     "name": "Ideas module",
-    "version": "17.0.1.0.0",
+    "version": "1.0",
     "author": "Pablo Marín",
     "license": "AGPL-3",
     "depends": [
