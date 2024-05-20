@@ -24,7 +24,6 @@
                     <button string="En proceso" name="proceso" type="object" invisible="state!='aprobada'" />
                     <button string="Completar" name="completada" type="object" invisible="state not in 'proceso,aprobada'"/>
                     <button string="Votar" name="open_vote_form" type="object" invisible="state not in 'proceso'"/>
-                    <!-- <button string="Enviar por email" name="action_idea_send_by_email" type="object" invisible="state not in 'completada'"/> -->
                     <button string="Cancelar" name="cancelada" type="object" invisible="state not in 'revision,aprobada,proceso'"/>
                     <field name="state" widget="statusbar"/>
                 </header>
@@ -80,7 +79,7 @@
         <field name="name">view.idea_management.search</field>
         <field name="model">idea.management</field>
         <field name="arch" type="xml">
-            <search string="Ticket">
+            <search string="Idea">
                 <!-- Filtrar por nombre y por empleado asignado -->
                 <field name="name"/>
                 <field name= "employee_id"/>
@@ -104,13 +103,25 @@
         <field name="name">view.idea_management.calendar</field>
         <field name="model">idea.management</field>
         <field name="arch" type="xml">
-            <calendar string="Ideas" date_start="create_date" color="employee_id" hide_time="true" event_limit="5">
+            <calendar string="Ideas" date_start="create_date" color="employee_id" hide_time="true">
                 <field name="employee_id" avatar_field="image_128"/>
                 <field name="name"/>
                 <field name="create_date"/>
                 <field name="deadline"/>
                 <field name="days_duration"/>
             </calendar>
+        </field>
+    </record>
+    
+    <record id="view_idea_management_pivot" model="ir.ui.view">
+        <field name="name">view.idea_management.pivot</field>
+        <field name="model">idea.management</field>
+        <field name="arch" type="xml">
+            <pivot string="Idea">
+                <field name="employee_id" type="row"/>
+                <field name="create_date" interval="month" type="col"/>
+                <field name="price" widget="monetary"/>                    
+            </pivot>
         </field>
     </record>
 
@@ -131,24 +142,15 @@
         </field>
     </record>
 
-    <record id="view_idea_management_pivot" model="ir.ui.view">
-        <field name="name">view.idea_management.pivot</field>
-        <field name="model">idea.management</field>
-        <field name="arch" type="xml">
-            <pivot string="Ticket">
-                <field name="employee_id" type="row"/>
-                <field name="create_date" interval="month" type="col"/>
-                <field name="price" widget="monetary"/>                    
-            </pivot>
-        </field>
-    </record>
-
+    
     <record id="view_idea_management_kanban" model="ir.ui.view">
         <field name="name">view.idea_management.kanban</field>
         <field name="model">idea.management</field>
         <field name="arch" type="xml">
             <kanban default_group_by="employee_id">
-                <progressbar field="state" colors="{&quot;revision&quot;: &quot;secondary&quot;, &quot;aprobada&quot;: &quot;warning&quot;, &quot;proceso&quot;: &quot;info&quot;, &quot;completada&quot;: &quot;success&quot;, &quot;cancelada&quot;: &quot;danger&quot;}"/>
+                <progressbar field="state" colors="{&quot;revision&quot;: &quot;secondary&quot;, &quot;aprobada&quot;: &quot;warning&quot;, 
+                                                    &quot;proceso&quot;: &quot;info&quot;, &quot;completada&quot;: &quot;success&quot;, 
+                                                    &quot;cancelada&quot;: &quot;danger&quot;}"/>
                 <field name="state" invisible="1"/>
                 <field name="idea_type" invisible="1"/>
                 <templates>
@@ -165,7 +167,7 @@
                                 <field name="create_date"/>
                             </div>
                             <div class="oe_kanban_bottom_left">
-                                <field name="state"/>
+                                <field name="price" widget="monetary"/>
                             </div>
                             <div class="o_kanban_quick_actions">
                                 <button name="change_state" class="btn btn-sm btn-primary" type="object" title="Cambiar estado">Cambiar Estado</button>
@@ -173,7 +175,7 @@
                             <div class="oe_kanban_footer">
                             <div class="o_kanban_record_bottom">
                                 <div class="oe_kanban_bottom_left">
-                                    <field name="price" widget="monetary"/>
+                                    <field name="state"/>
                                     <field name="activity_ids" widget="kanban_activity"/>
                                 </div>
                                 <div class="oe_kanban_bottom_right">

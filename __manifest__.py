@@ -18,5 +18,6 @@
         "views/idea_menu.xml",
         "views/idea_management_view.xml",
         "views/idea_management_vote_view.xml",
+        "views/idea_management_report_view.xml",
     ],
 }
