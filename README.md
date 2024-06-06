@@ -20,6 +20,17 @@ Este módulo de Odoo permite gestionar ideas dentro de tu empresa, permitiendo a
 
 3. Ve a la lista de aplicaciones de Odoo y busca el módulo "ideas_module" para poder activarlo.
 
+## Configuración de Permisos
+
+Para que el módulo funcione correctamente y los usuarios tengan los permisos necesarios, debemos de configurar los permisos de usuario. 
+
+1. Ve a los ajustes de usuarios en Odoo.
+2. Para cada usuario, asigna los permisos adecuados según el rol que deben desempeñar:
+    - **User**: Permite a los usuarios votar por las ideas aprobadas.
+    - **Manager**: Permite a los administradores aprobar ideas y votar.
+    - **Acceso para votar de los usuarios**: Permite a los usuarios votar en las ideas.
+    - **Acceso para votar de los managers**: Permite a los administradores votar y gestionar votos en las ideas.
+
 ## Uso
 
 1. Ve al menú "Idea" en Odoo.
