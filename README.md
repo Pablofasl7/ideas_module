@@ -47,3 +47,6 @@ Este proyecto está bajo la Licencia MIT. Para más detalles, consulta el archiv
 
 ## Para mas información, ver el siguiente vídeo demostrativo
 https://youtu.be/Xxkq3SI_DvU
+
+##  Memoria del proyecto
+https://github.com/Pablofasl7/ideas_module/blob/main/Proyecto%20Final%20TFG%20-%20Pablo%20Marin.pdf
